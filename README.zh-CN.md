@@ -104,29 +104,42 @@ Hy-SimulMT 在 FLEURS、ACL6060 和 RealSI-Sentence 三个测试集上的得分�
 
 除了量化指标，也可以通过以下四段对比视频，直观体验 Hy-SimulMT 与人工同传在信息传达、响应节奏和译语表达上的表现。
 
-**对比示例 1**
+点击播放器右下角的**全屏按钮**，或点击下方的**观看大视频**链接，即可放大观看。
 
-https://github.com/user-attachments/assets/7822209c-5124-41ee-856f-e00e9073a445
-
-[观看对比示例 1（31 秒）](assets/videos/human_comparison_01.mp4)
-
-**对比示例 2**
-
-https://github.com/user-attachments/assets/78b0fed6-dc3b-41e8-9345-18f10480a7b2
-
-[观看对比示例 2（38 秒）](assets/videos/human_comparison_02.mp4)
-
-**对比示例 3**
-
-https://github.com/user-attachments/assets/07ebf679-2e78-4864-b007-fbd1ec802ca0
-
-[观看对比示例 3（26 秒）](assets/videos/human_comparison_03.mp4)
-
-**对比示例 4**
-
-https://github.com/user-attachments/assets/ec690659-eb8d-44f9-a6ea-f5f2d100a330
-
-[观看对比示例 4（37 秒）](assets/videos/human_comparison_04.mp4)
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <p><b>对比示例 1</b></p>
+      <video src="https://github.com/user-attachments/assets/7822209c-5124-41ee-856f-e00e9073a445" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/7822209c-5124-41ee-856f-e00e9073a445">观看大视频 · 31 秒</a>
+      </p>
+    </td>
+    <td align="center" width="50%">
+      <p><b>对比示例 2</b></p>
+      <video src="https://github.com/user-attachments/assets/78b0fed6-dc3b-41e8-9345-18f10480a7b2" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/78b0fed6-dc3b-41e8-9345-18f10480a7b2">观看大视频 · 38 秒</a>
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <p><b>对比示例 3</b></p>
+      <video src="https://github.com/user-attachments/assets/07ebf679-2e78-4864-b007-fbd1ec802ca0" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/07ebf679-2e78-4864-b007-fbd1ec802ca0">观看大视频 · 26 秒</a>
+      </p>
+    </td>
+    <td align="center" width="50%">
+      <p><b>对比示例 4</b></p>
+      <video src="https://github.com/user-attachments/assets/ec690659-eb8d-44f9-a6ea-f5f2d100a330" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/ec690659-eb8d-44f9-a6ea-f5f2d100a330">观看大视频 · 37 秒</a>
+      </p>
+    </td>
+  </tr>
+</table>
 
 ## 不只翻译文字，也保留声音特点
 
