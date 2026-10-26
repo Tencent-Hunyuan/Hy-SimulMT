@@ -93,7 +93,7 @@ Hy-SimulMT 在 FLEURS、ACL6060 和 RealSI-Sentence 三个测试集上的得分�
 除测试 Hy-SimulMT 外，我们还邀请了六位拥有多年同传实战经验的译员，分别对这些音频进行同声传译：其中三位持有 CATTI 一级口译证书，三位持有 CATTI 二级口译证书。每个等级均选取三位译员中的最高分进行对照。
 
 <div align="center">
-  <img src="assets/hy_vs_human_streamlaal_horizontal_hyblue_zh.png" width="100%" alt="Hy-SimulMT 与 CATTI 一级、二级口译专家的 StreamLAAL 时延对比" />
+  <img src="assets/hy_vs_human_streamlaal_horizontal_hyblue_zh.png" width="80%" alt="Hy-SimulMT 与 CATTI 一级、二级口译专家的 StreamLAAL 时延对比" />
 </div>
 
 可以看到，在这次小范围的能力定位测评中，Hy-SimulMT在翻译的质量达到人类同传专家水平，不过速度往往更快（时延更低）。
