@@ -103,29 +103,44 @@ In this evaluation, Hy-SimulMT achieved a **human evaluation score of 85.8**, **
 
 Beyond the quantitative results, the following four videos illustrate how Hy-SimulMT and human interpreters compare in information delivery, response timing, and phrasing in the target language.
 
-**Comparison Example 1**
+Click the fullscreen button in each player, or select **Watch larger** to open the full-size video.
 
-https://github.com/user-attachments/assets/4bb35f80-d0cb-41f4-b605-62da7a1d7122
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <p><b>Comparison Example 1</b></p>
+      <video src="https://github.com/user-attachments/assets/4bb35f80-d0cb-41f4-b605-62da7a1d7122" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/4bb35f80-d0cb-41f4-b605-62da7a1d7122">Watch larger · 32 seconds</a>
+      </p>
+    </td>
+    <td align="center" width="50%">
+      <p><b>Comparison Example 2</b></p>
+      <video src="https://github.com/user-attachments/assets/5394f3f7-c555-4309-af7f-2755601ba33e" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/5394f3f7-c555-4309-af7f-2755601ba33e">Watch larger · 38 seconds</a>
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <p><b>Comparison Example 3</b></p>
+      <video src="https://github.com/user-attachments/assets/cf8b73f4-f829-44a9-a9c1-fe1df7b3be7e" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/cf8b73f4-f829-44a9-a9c1-fe1df7b3be7e">Watch larger · 26 seconds</a>
+      </p>
+    </td>
+    <td align="center" width="50%">
+      <p><b>Comparison Example 4</b></p>
+      <video src="https://github.com/user-attachments/assets/37706426-77a9-4ec8-a4d7-b3edf65a3ac9" width="380" controls></video>
+      <p>
+        <a href="https://github.com/user-attachments/assets/37706426-77a9-4ec8-a4d7-b3edf65a3ac9">Watch larger · 36 seconds</a>
+      </p>
+    </td>
+  </tr>
+</table>
 
-[Watch comparison example 1 (32 seconds)](assets/videos/en/human_comparison_01.mp4)
 
-**Comparison Example 2**
-
-https://github.com/user-attachments/assets/5394f3f7-c555-4309-af7f-2755601ba33e
-
-[Watch comparison example 2 (38 seconds)](assets/videos/en/human_comparison_02.mp4)
-
-**Comparison Example 3**
-
-https://github.com/user-attachments/assets/cf8b73f4-f829-44a9-a9c1-fe1df7b3be7e
-
-[Watch comparison example 3 (26 seconds)](assets/videos/en/human_comparison_03.mp4)
-
-**Comparison Example 4**
-
-https://github.com/user-attachments/assets/37706426-77a9-4ec8-a4d7-b3edf65a3ac9
-
-[Watch comparison example 4 (36 seconds)](assets/videos/en/human_comparison_04.mp4)
 
 ## Beyond Text: Preserving the Speaker's Voice
 
