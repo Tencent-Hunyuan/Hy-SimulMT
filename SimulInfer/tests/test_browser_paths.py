@@ -23,7 +23,7 @@ def test_page_resources_and_config_are_usable_under_mount(prefix):
         assert page.status_code==200 and page.headers['cache-control']=='no-store'
         assert 'id="mode"' not in page.text
         assert 'href="./static/' in page.text and 'src="./static/' in page.text
-        for asset in ('app.js','urls.js','recorder.js','style.css'):
+        for asset in ('app.js','urls.js','file-upload.js','recorder.js','style.css'):
             assert client.get(prefix+'/static/'+asset).status_code==200
         response=client.get(prefix+'/config')
         assert response.status_code==200 and response.headers['cache-control']=='no-store'

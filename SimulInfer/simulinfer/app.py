@@ -20,6 +20,9 @@ from .translation import VLLMSession, ServiceSession, MockSession, validate_mode
 from .tts import Speech
 from .events import public_event
 from . import __version__
+from .file_jobs import FileJobs
+
+SSE_KEEPALIVE_SECONDS = 15
 
 
 def request_options(settings, *, model_type=None, mode=None, vad=None, tts=None):
@@ -142,6 +145,7 @@ async def translate(settings, mode, direction, source, emit, tts=False, voice=''
 
 def build_app(settings=None, *, preflight_result=None):
     settings = settings or load()
+    file_jobs=FileJobs()
     @contextlib.asynccontextmanager
     async def lifespan(app):
         nonlocal settings
@@ -151,7 +155,8 @@ def build_app(settings=None, *, preflight_result=None):
         if preflight_result is None:
             from .preflight import check
             await check(settings)
-        yield
+        try:yield
+        finally:await file_jobs.close()
     app = FastAPI(title='SimulInfer',version=__version__,lifespan=lifespan)
     gate = asyncio.Semaphore(settings.max_sessions)
     state = {'active_sessions':0,'waiting_sessions':0}
@@ -192,6 +197,7 @@ def build_app(settings=None, *, preflight_result=None):
                                   'short_chunk':{'label':'短分块模式（首块必须1600ms，后续800ms）','chunk_ms':800}},
                 'response_mode_available':{k:m.backend!='service' for k,m in settings.models.items()},
                 'chunk_ms':settings.chunk_ms,'first_chunk_ms':settings.first_chunk_ms,
+                'file_upload_transport':'polling',
                 'tts_available':settings.tts_backend!='none',
                 'tts_clone_source':settings.clone_source_enabled,
                 'mock':all(m.backend=='mock' for m in settings.models.values())}
@@ -200,6 +206,51 @@ def build_app(settings=None, *, preflight_result=None):
     async def index():return FileResponse(Path(__file__).parent/'static/index.html',headers={'Cache-Control':'no-store'})
 
     app.mount('/static',StaticFiles(directory=Path(__file__).parent/'static'),name='static')
+
+    @app.post('/translate/submit')
+    async def submit_file(file:UploadFile=File(...),direction:str=Form('zh-en'),
+                          model_type:str|None=Form(None),response_mode:str|None=Form(None),
+                          vad:bool|None=Form(None),tts:bool|None=Form(None),voice:str=Form('')):
+        try:
+            mode,use_vad,use_tts=request_options(settings,model_type=model_type,vad=vad,tts=tts)
+            request_settings=session_settings(settings,use_vad,response_mode,mode,transport='stream')
+            validate_mode(mode,direction,settings)
+            data=await file.read(settings.max_upload_mb*1024*1024+1)
+            if not data or len(data)>settings.max_upload_mb*1024*1024:
+                raise ValueError('文件为空或超过上传大小限制')
+        except (ValueError,RuntimeError) as exc:
+            raise HTTPException(400,str(exc)) from exc
+        finally:await file.close()
+
+        async def run(emit):
+            async with slot():
+                samples,info=await asyncio.to_thread(decode_file_with_info,data,
+                    settings.max_upload_mb*1024*1024//2)
+                async def source():
+                    for pos in range(0,len(samples),1600):yield samples[pos:pos+1600]
+                async def publish(event):
+                    if event.get('event') in {'ready','done'}:event={**event,'input_audio':info}
+                    event=public_event(event)
+                    if event is not None:await emit(event)
+                await translate(request_settings,mode,direction,source(),publish,use_tts,voice)
+        try:token=file_jobs.create(len(data),run,settings.timeout_seconds)
+        except ValueError as exc:raise HTTPException(503,str(exc)) from exc
+        return Response(json.dumps({'task_id':token}),media_type='application/json',
+                        headers={'Cache-Control':'no-store'})
+
+    @app.get('/translate/task/{task_id}')
+    async def poll_file(task_id:str,cursor:int=0):
+        try:result=file_jobs.get(task_id).poll(cursor)
+        except KeyError as exc:raise HTTPException(404,str(exc)) from exc
+        except ValueError as exc:raise HTTPException(400,str(exc)) from exc
+        return Response(json.dumps(result,ensure_ascii=False),media_type='application/json',
+                        headers={'Cache-Control':'no-store'})
+
+    @app.delete('/translate/task/{task_id}')
+    async def cancel_file(task_id:str):
+        try:await file_jobs.cancel(task_id)
+        except KeyError as exc:raise HTTPException(404,str(exc)) from exc
+        return Response(status_code=204,headers={'Cache-Control':'no-store'})
 
     @app.post('/translate/stream')
     async def stream(file:UploadFile=File(...), direction:str=Form('zh-en'),
@@ -237,15 +288,24 @@ def build_app(settings=None, *, preflight_result=None):
                     if not asyncio.current_task().cancelling():await events.put(None)
             task=asyncio.create_task(run())
             try:
+                # Flush a response even while a session slot/model is pending.
+                # SSE comments keep proxies alive without changing the JSON protocol.
+                yield ': connected\n\n'
                 while True:
-                    event=await events.get()
+                    try:
+                        event=await asyncio.wait_for(events.get(),SSE_KEEPALIVE_SECONDS)
+                    except asyncio.TimeoutError:
+                        yield ': keep-alive\n\n'
+                        continue
                     if event is None:break
                     yield 'data: '+json.dumps(event,ensure_ascii=False)+'\n\n'
                 await task
             finally:
                 task.cancel();await asyncio.gather(task,return_exceptions=True)
         return StreamingResponse(iterator(),media_type='text/event-stream',
-            headers={'Cache-Control':'no-cache','X-Accel-Buffering':'no'})
+            # code-server applies compression unless no-transform is present;
+            # compression can hold the first bytes until the request times out.
+            headers={'Cache-Control':'no-cache, no-transform','X-Accel-Buffering':'no'})
 
     @app.websocket('/translate/ws')
     async def realtime(ws:WebSocket):

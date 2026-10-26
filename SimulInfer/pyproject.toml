@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "simulinfer"
-version = "0.5.15"
+version = "0.5.18"
 description = "通过模型 HTTP 接口运行同传、实时 WebSocket 和可选 TTS 的轻量服务"
 readme = "README.md"
 requires-python = ">=3.11"

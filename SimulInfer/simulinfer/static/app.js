@@ -1,9 +1,26 @@
 import {serviceURL, websocketURL} from './urls.js';
-import {t, setMessage, setLiteral, uiError} from './i18n.js?v=0.5.14';
+import {t, setMessage, setLiteral, uiError} from './i18n.js?v=0.5.18';
+import {uploadFile} from './file-upload.js?v=0.5.18';
 const $=id=>document.getElementById(id);
 let ws,context,media,node,playingAt=0,busy=false,pendingAudio=null,ttsSources=[],captureFlushed=null;
 let ttsFinished=false;
+let fileAbort=null;
+let sourceDirection='zh-en';
+let sourceRaw='';
 let settings=null,inputNode=null,mutedNode=null,captureStats=null,captureTimer=null;
+function sourceForDisplay(text){
+  const value=text||'';
+  if(sourceDirection!=='en-zh')return value;
+  // Normalize only an entirely uppercase source. Preserve mixed/lowercase text,
+  // including acronyms, and reconsider the raw transcript as more chunks arrive.
+  if(value!==value.toUpperCase()||value===value.toLowerCase())return value;
+  return value.toLowerCase().replace(/(^|[.!?。！？]\s*|\n+)([^a-z0-9]*)([a-z])/g,
+    (_,boundary,prefix,letter)=>boundary+prefix+letter.toUpperCase());
+}
+function updateSource(text,append=false){
+  sourceRaw=append?sourceRaw+(text||''):(text||'');
+  $('source').textContent=sourceForDisplay(sourceRaw);
+}
 function updateCaptureStatus(force=false){
   if(!captureStats||(!busy&&!force))return;
   const now=performance.now(),s=captureStats;
@@ -78,8 +95,10 @@ async function initialize(){
   }catch(e){fail(e);setBusy(false)}
 }
 function fail(e){$('error').hidden=false;if(e.i18nKey)setMessage($('error'),e.i18nKey,e.i18nParams);else setLiteral($('error'),e.message||String(e));setMessage($('status'),'failed');}
-function setBusy(value){busy=value;for(const id of ['upload','mic','response-mode','direction','direction-swap','tts','voice','file'])$(id).disabled=!settings||value||(id==='response-mode'&&!cadenceAvailable())||(id==='tts'&&!settings.tts_available);$('stop').disabled=!value||!ws;}
+function setBusy(value){busy=value;for(const id of ['upload','mic','response-mode','direction','direction-swap','tts','voice','file'])$(id).disabled=!settings||value||(id==='response-mode'&&!cadenceAvailable())||(id==='tts'&&!settings.tts_available);$('stop').disabled=!value||(!ws&&!fileAbort);}
 async function prepare(){
+  sourceDirection=$('direction').value;
+  sourceRaw='';
   $('error').hidden=true;$('source').textContent='';$('translation').textContent='';$('progress').textContent='';showModel(defaultModel());pendingAudio=null;
   $('tts-history').hidden=true;
   $('tts-warning').hidden=true;$('tts-status').hidden=true;ttsFinished=false;
@@ -139,6 +158,8 @@ function handle(e){
   }
   if(e.event==='error')throw (e.detail?Error(e.detail):uiError('serviceError'));
   if(e.event==='ready'){
+    sourceDirection=e.direction||sourceDirection;
+    sourceRaw='';
     showModel(e.model_type||e.mode||defaultModel());
     if(typeof e.source_text_enabled==='boolean')$('source-panel').hidden=!e.source_text_enabled;
     setMessage($('status'),'connected');
@@ -163,32 +184,48 @@ function handle(e){
   if(e.event==='chunk'||e.event==='flush'){
     if(captureStats){captureStats.processedMs=e.end_ms||captureStats.processedMs;captureStats.lastAction=e.action;updateCaptureStatus()}
     $('translation').textContent+=e.text||'';
-    if(e.source_text_full!==undefined)$('source').textContent=e.source_text_full;
-    else $('source').textContent+=e.source_text||'';
+    if(e.source_text_full!==undefined)updateSource(e.source_text_full);
+    else updateSource(e.source_text,true);
     $('progress').textContent=`${((e.end_ms||0)/1000).toFixed(1)}s · ${e.action||'WAIT'}`;
     setMessage($('status'),e.text?'translating':'waitingMore');
   }
   if(e.event==='done'){
     if(e.full_text!==undefined)$('translation').textContent=e.full_text;
-    if(e.source_text!==undefined)$('source').textContent=e.source_text||'';
+    if(e.source_text!==undefined)updateSource(e.source_text);
     if(captureStats){captureStats.receivedMs=e.duration_ms;captureStats.processedMs=e.duration_ms;updateCaptureStatus()}
     const warning=e.complete===false||e.unresolved_audio_ms||e.skipped_untranslated_audio_ms;
     setMessage($('status'),warning?'incomplete':'done');
   }
 }
 $('file').onchange=()=>{const f=$('file').files[0];if(f)setLiteral($('status'),f.name)};
+async function uploadError(response){
+  if(response.status===504)return uiError('gatewayTimeout');
+  if(response.status===502||response.status===503)return uiError('serviceUnavailable',{status:response.status});
+  if(response.status===413)return uiError('uploadTooLarge');
+  if((response.headers.get('content-type')||'').includes('application/json')){
+    try{const body=await response.json();if(typeof body.detail==='string')return Error(body.detail)}catch{}
+  }
+  return uiError('uploadHttp',{status:response.status});
+}
 $('upload').onclick=async()=>{
   if(busy||!settings)return;const file=$('file').files[0];if(!file)return fail(uiError('chooseFile'));
   setBusy(true);
+  const controller=new AbortController();let reader;
+  fileAbort=controller;$('stop').disabled=false;
   try{
     await prepare();setMessage($('status'),'uploading');
+    if(settings.file_upload_transport==='polling'){
+      await uploadFile(file,{direction:$('direction').value,tts:$('tts').checked,voice:$('voice').value},
+        {url:serviceURL,onEvent:handle,signal:controller.signal,error:uiError,httpError:uploadError});
+      return;
+    }
     const data=new FormData();data.append('file',file);data.append('direction',$('direction').value);data.append('tts',$('tts').checked);data.append('voice',$('voice').value);
-    const r=await fetch(serviceURL('translate/stream'),{method:'POST',body:data});if(!r.ok)throw Error(await r.text());
-    const reader=r.body.getReader(),decoder=new TextDecoder();let buf='',doneSeen=false;
+    const r=await fetch(serviceURL('translate/stream'),{method:'POST',body:data,signal:controller.signal});if(!r.ok)throw await uploadError(r);
+    reader=r.body.getReader();const decoder=new TextDecoder();let buf='',doneSeen=false;
     while(true){const {value,done}=await reader.read();if(done)break;buf+=decoder.decode(value,{stream:true});
       let pos;while((pos=buf.indexOf('\n\n'))>=0){const item=buf.slice(0,pos);buf=buf.slice(pos+2);for(const line of item.split('\n'))if(line.startsWith('data:')){const e=JSON.parse(line.slice(5));handle(e);if(e.event==='done')doneSeen=true}}}
     if(!doneSeen)throw uiError('missingDone');
-  }catch(e){fail(e)}finally{setBusy(false)}
+  }catch(e){fail(e.name==='AbortError'?uiError('uploadCancelled'):e)}finally{controller.abort();if(reader)await reader.cancel().catch(()=>{});fileAbort=null;setBusy(false)}
 };
 async function stopCapture(){
   if(captureTimer){clearInterval(captureTimer);captureTimer=null}
@@ -242,6 +279,7 @@ $('mic').onclick=async()=>{
   }catch(e){fail(e);await stopCapture();ws?.close();ws=null;setBusy(false)}
 };
 $('stop').onclick=async()=>{
+  if(fileAbort){fileAbort.abort();return}
   if(captureStats)captureStats.stopping=true;
   $('stop').disabled=true;setMessage($('status'),'finishing');
   try{
