@@ -197,7 +197,7 @@ From understanding the message to keeping pace with the speaker and delivering m
 
 ## Deploy inference
 
-> **You can also follow the [SimulInfer README](SimulInfer/README.md) for step-by-step installation, model deployment, and service startup.**
+> **Follow the [SimulInfer README](SimulInfer/README.md) for step-by-step installation, or use the one-command deployment below.** With `--install-server`, the command installs dependencies in isolated deployment environments. Running it again repeats the installation steps and may reinstall SimulInfer or change dependency versions in those environments. If you use a custom vLLM/CUDA environment or need control over dependency versions, follow the step-by-step guide or use the **Existing compatible vLLM environment** option below.
 
 **SimulInfer** provides a web page, audio file uploads, real-time WebSocket and
 optional TTS with input voice cloning. The deployed model determines whether

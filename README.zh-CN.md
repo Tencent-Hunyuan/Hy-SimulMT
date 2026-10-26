@@ -192,7 +192,7 @@ https://github.com/user-attachments/assets/466a64c2-787b-4ade-8f22-576a2d31edac
 
 ## 部署推理服务
 
-> **也可以参考 [SimulInfer README](SimulInfer/README.zh-CN.md)，按照详细步骤逐步安装依赖、部署模型并启动推理服务。**
+> **可以参考 [SimulInfer README](SimulInfer/README.zh-CN.md) 逐步安装，也可以使用下方的一键部署命令。** 带 `--install-server` 的一键部署会在独立部署环境中安装依赖；再次运行会重新执行安装步骤，可能重新安装 SimulInfer 或调整这些环境中的依赖版本。如果已有定制的 vLLM/CUDA 环境，或需要自行控制依赖版本，建议按详细指南逐步安装，或使用下方的**“已有兼容的 vLLM 环境”**方式。
 
 **SimulInfer** 支持网页、音频文件上传、实时 WebSocket，以及可选的 TTS 输入音色克隆。
 页面根据部署的模型自动显示源文或仅显示译文，无需再选择输出模式。
