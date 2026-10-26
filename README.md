@@ -306,6 +306,8 @@ and [TTS setup](SimulInfer/docs/TTS.en.md).
 
 ### llama.cpp
 
+> Hy-SimulMT support has not yet been merged into the official llama.cpp repository. Support is expected soon; we recommend waiting for a new llama.cpp release that supports this model before using it.
+
 Use this option when an audio-capable llama.cpp server has already loaded your
 Hy-SimulMT GGUF model on port **8080**. In a Python 3.11+ environment, run the
 following from the repository root:

@@ -293,6 +293,8 @@ bash deploy.sh --backend-url http://model-host:8800/v1 --port 8081 --runtime-dir
 
 ### llama.cpp
 
+> Hy-SimulMT 的 llama.cpp 适配尚未合并至官方仓库，相关支持预计很快推出，建议等待支持该模型的新版 llama.cpp 发布后再使用。
+
 前提：支持音频输入的 llama.cpp 服务已在 **8080** 端口加载你的 Hy-SimulMT GGUF 模型。
 在 Python 3.11 及以上环境中，从仓库根目录执行：
 
