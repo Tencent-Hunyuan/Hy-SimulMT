@@ -197,6 +197,8 @@ From understanding the message to keeping pace with the speaker and delivering m
 
 ## Deploy inference
 
+> **You can also follow the [SimulInfer README](SimulInfer/README.md) for step-by-step installation, model deployment, and service startup.**
+
 **SimulInfer** provides a web page, audio file uploads, real-time WebSocket and
 optional TTS with input voice cloning. The deployed model determines whether
 source text is displayed; no output-mode selection is needed.

@@ -192,6 +192,8 @@ https://github.com/user-attachments/assets/466a64c2-787b-4ade-8f22-576a2d31edac
 
 ## 部署推理服务
 
+> **也可以参考 [SimulInfer README](SimulInfer/README.zh-CN.md)，按照详细步骤逐步安装依赖、部署模型并启动推理服务。**
+
 **SimulInfer** 支持网页、音频文件上传、实时 WebSocket，以及可选的 TTS 输入音色克隆。
 页面根据部署的模型自动显示源文或仅显示译文，无需再选择输出模式。
 
