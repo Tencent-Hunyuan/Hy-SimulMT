@@ -4,7 +4,7 @@
 </p>
 
 <h1 align="center">
-  <img src="assets/hy-simulmt-logo.png" width="32" height="32" alt="Hy-SimulMT logo"> Hy-SimulMT
+  <sub><img src="assets/hy-simulmt-logo.png" width="50" height="50" alt="Hy-SimulMT logo"></sub> Hy-SimulMT
 </h1>
 
 <p align="center"><b>A Low-Latency, High-Quality Model for Real-Time Simultaneous Translation</b></p>
