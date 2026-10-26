@@ -92,7 +92,7 @@ To further examine performance on real-world content, we collected **18 Chinese 
 Alongside Hy-SimulMT, we invited six interpreters with years of practical simultaneous interpreting experience to interpret these recordings. Three held CATTI Level 1 interpreting certificates, and three held CATTI Level 2 interpreting certificates. For each certification level, the highest score among the three interpreters was used for comparison.
 
 <div align="center">
-  <img src="assets/hy_vs_human_human_eval_acc_streamlaal_hyblue.png" width="100%" alt="Hy-SimulMT vs. CATTI Level 1 and Level 2 interpreters: human evaluation score and StreamLAAL" />
+  <img src="assets/EN_hy_vs_human_human_eval_acc_streamlaal_hyblue.png" width="100%" alt="Hy-SimulMT vs. CATTI Level 1 and Level 2 interpreters: human evaluation score and StreamLAAL" />
 </div>
 
 In this evaluation, Hy-SimulMT achieved a **human evaluation score of 85.8**, **7.9 points** higher than the CATTI Level 1 interpreter comparison, and a **StreamLAAL of 3.3 seconds**, **1.2 seconds** lower than that comparison. These results demonstrate the potential to combine low latency with high translation quality.
