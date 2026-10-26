@@ -1,0 +1,18 @@
+# Generic PCM TTS. History audio is intentionally disabled unless the API supports it.
+[server]
+host = "127.0.0.1"
+port = 8080
+max_sessions = 16
+
+[models.target_only]
+backend = "service"
+base_url = "http://127.0.0.1:8000"
+
+[tts]
+tts_backend = "openai"
+tts_url = "http://127.0.0.1:8091/v1"
+tts_model = "tts-model"
+tts_voice = "default"
+tts_sample_rate = 24000
+tts_min_chars = 40
+tts_history_mode = "none"

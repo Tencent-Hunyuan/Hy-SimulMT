@@ -1,0 +1,32 @@
+# Qwen3-TTS Base behind vLLM-Omni. Paths below are examples supplied by the operator.
+[server]
+host = "127.0.0.1"
+port = 8080
+max_sessions = 16
+
+[defaults]
+tts = true
+
+[model]
+base_url = "http://127.0.0.1:8800/v1"
+
+[tts]
+tts_backend = "vllm_omni"
+tts_url = "http://127.0.0.1:8091/v1"
+tts_model = "Qwen/Qwen3-TTS-12Hz-0.6B-Base"
+tts_task_type = "Base"
+tts_sample_rate = 24000
+tts_min_chars = 40
+tts_history_mode = "paired"
+tts_history_window_s = 10
+tts_history_max_chars = 240
+tts_clone_source = true
+tts_clone_first_seconds = 2.4
+tts_clone_interval_seconds = 10
+tts_speed = 1.1
+tts_speed_zh_en = 1.2
+tts_batch_ms = 650
+tts_timeout_seconds = 30
+tts_max_new_tokens = 0
+tts_tail_filter = true
+tts_api_key_env = "TTS_API_KEY"

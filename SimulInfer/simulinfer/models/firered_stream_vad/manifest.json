@@ -1,0 +1,19 @@
+{
+  "model": "FireRedStreamVAD",
+  "upstream_repository": "https://github.com/FireRedTeam/FireRedVAD",
+  "upstream_model": "https://huggingface.co/FireRedTeam/FireRedVAD",
+  "license": "Apache-2.0",
+  "runtime_device": "cpu",
+  "files": {
+    "model.pth.tar": {
+      "sha256": "ec88a8ae8ac5f004cdbd20c1eac4a9e9d12067c3d51ac5b141afa1f921fb59c9",
+      "bytes": 2283513
+    },
+    "cmvn.ark": {
+      "sha256": "c87f6f13edf0f0ec7535ddfc9cc3387d9268cb234b70182d566c5e2edf3ca473",
+      "bytes": 1311
+    }
+  },
+  "upstream_revision": "7990aaccc6b7aec1e527743bd30201f2c4a03b8c",
+  "upstream_subdirectory": "Stream-VAD"
+}

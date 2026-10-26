@@ -1,0 +1,21 @@
+# Full example: simulst-mm model service + a history-aware Qwen session server.
+[server]
+host = "127.0.0.1"
+port = 8080
+max_sessions = 16
+
+[models.target_only]
+backend = "service"
+base_url = "http://127.0.0.1:8000"
+
+[tts]
+tts_backend = "session"
+tts_url = "http://127.0.0.1:8003"
+tts_voice = ""
+tts_sample_rate = 24000
+tts_min_chars = 40
+tts_history_mode = "paired"
+tts_history_window_s = 10
+tts_history_max_chars = 240
+tts_speed = 1.0
+tts_speed_zh_en = 1.2

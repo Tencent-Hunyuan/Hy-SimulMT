@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+
+# 虚拟环境（install.sh 会重新生成）
+.venv/
+venv/
+env/
+
+# 本机路径配置，各人不同，不要提交
+.env
+
+# 训练产物与日志：都在 EXP_DIR 下，正常不会落到仓库里，
+# 这里兜一层防止误配路径时把权重提交上去
+output/
+outputs/
+exp/
+log/
+logs/
+composite/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+wandb/
+runs/
+
+# 编辑器/ 系统
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# 临时文件
+*.log
+tmp/
+.ipynb_checkpoints/
+
+.env.local
+.env.*.local
+*.log

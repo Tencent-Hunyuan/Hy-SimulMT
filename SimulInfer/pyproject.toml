@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simulinfer"
+version = "0.5.15"
+description = "通过模型 HTTP 接口运行同传、实时 WebSocket 和可选 TTS 的轻量服务"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "httpx>=0.27,<1",
+  "numpy>=1.26,<3", "soundfile>=0.12,<1", "python-multipart>=0.0.18,<1",
+  "websockets>=14,<16", "jinja2>=3.1,<4", "soxr>=0.5,<2", "imageio-ffmpeg>=0.5,<1"
+]
+
+[project.optional-dependencies]
+vad = ["torch>=2.2", "fireredvad[cpu]>=0.0.2,<0.1"]
+vad-silero = ["torch>=2.2"]
+vad-st = ["torch>=2.2", "fireredvad[cpu]>=0.0.2,<0.1"]
+tts-qwen = ["qwen-tts>=0.1.1", "imageio-ffmpeg>=0.5"]
+test = ["pytest>=8,<9", "pytest-asyncio>=0.24,<1", "jinja2>=3.1,<4"]
+
+[project.entry-points."vllm.general_plugins"]
+simulinfer_tts_source = "simulinfer.tts_omni_plugin:register"
+
+[project.entry-points."vllm.logits_processors"]
+simulinfer_simulst_ngram = "simulinfer.logits_plugins:SimulstNoRepeatNgramProcessor"
+simulinfer_st_ngram = "simulinfer.logits_plugins:STNoRepeatNgramProcessor"
+
+[project.urls]
+Repository = "https://github.com/Tencent-Hunyuan/Hy-SimulMT"
+
+[project.scripts]
+simulinfer-prepare-model = "simulinfer.prepare_model:main"
+simulinfer = "simulinfer.app:main"
+simulinfer-client = "simulinfer.client:main"
+simulinfer-vllm = "simulinfer.launch:main"
+simulinfer-tts-omni = "simulinfer.tts_launch:main"
+simulinfer-tts-qwen = "simulinfer.tts_launch:native_main"
+
+[tool.setuptools.packages.find]
+include = ["simulinfer*"]
+
+[tool.setuptools.package-data]
+simulinfer = ["default_config.toml", "static/*", "templates/*", "models/silero_vad_6.2.3/*", "models/firered_vad/*", "models/firered_stream_vad/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

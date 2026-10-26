@@ -1,0 +1,55 @@
+# SimulTrain training environment. Run bash install.sh from this directory.
+# Python >=3.11. Prepare matching PyTorch 2.9.1 / CUDA / flash-attn first.
+# The training venv reuses the selected interpreter's GPU packages. Do not
+# install these training pins into the SimulInfer/vLLM environment.
+# Audio decoding uses imageio-ffmpeg; CPU torchaudio matches PyTorch 2.9.1.
+
+# torchaudio 的 +cpu wheel 不在普通 PyPI 索引中。
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# ---------------- 核心 ----------------
+transformers==5.8.0
+deepspeed==0.19.5          # engine.save_checkpoint 支持 exclude_frozen_parameters
+accelerate==1.14.0
+peft==0.20.0
+trl==0.24.0
+safetensors==0.7.0
+mistral-common>=1.11.0
+
+# ---------------- 数据与分词 ----------------
+datasets==4.0.0
+sentencepiece==0.2.1
+tiktoken==0.12.0
+protobuf==6.33.2
+numpy==2.2.6
+scipy==1.17.0
+pandas==2.3.1
+
+# ---------------- 音频 ----------------
+# torch 由 --system-site-packages 继承（2.9.1），只需补 torchaudio 的 cpu 版
+torchaudio==2.9.1+cpu
+# 不依赖系统 ffmpeg：mm_plugin_speech.py 用 imageio-ffmpeg 自带的二进制
+# （容器里 which ffmpeg 为空也能正常跑）
+imageio-ffmpeg==0.6.0
+librosa==1.0.0
+soundfile==0.14.0
+
+# ---------------- LlamaFactory 侧 ----------------
+# llamafactory 本身**不用 pip 从 PyPI 装**：它以源码形式在 vendor/LlamaFactory，
+# 用 pip install -e vendor/LlamaFactory --no-deps 挂进来，或由 bootstrap.sh
+# 加到 PYTHONPATH。这里只装它依赖的第三方库。
+pyyaml==6.0.3
+einops==0.8.1
+omegaconf==2.3.0
+tyro==1.0.3
+packaging==25.0
+matplotlib==3.11.1
+nltk==3.10.3
+rouge_chinese==1.0.3
+jieba==0.42.1
+sacrebleu
+
+# ---------------- 当前环境没装、也确实用不到的 ----------------
+# fire        当前训练路径未使用
+# av          同上（音频解码走 imageio-ffmpeg）
+# modelscope  只在从 ModelScope 拉权重时需要，本地已有权重就不用

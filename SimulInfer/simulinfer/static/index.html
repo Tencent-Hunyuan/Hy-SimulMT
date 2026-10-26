@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="pageTitle">Hy-SimulMT · Live translation</title>
+<script>const base=document.createElement('base');base.href=new URL(location.pathname.replace(/\/?$/, '/'),location.origin).href;document.head.append(base);</script>
+<link rel="stylesheet" href="./static/style.css?v=0.5.14"></head>
+<body><main>
+<div class="locale-switch" role="group" aria-label="Interface language" data-i18n-aria="interfaceLanguage">
+<button type="button" id="ui-en" lang="en" aria-pressed="true">EN</button>
+<button type="button" id="ui-zh" lang="zh-CN" aria-pressed="false">中文</button>
+</div>
+<header><span class="eyebrow">Hy-SimulMT</span><h1 class="brand-title"><img src="./static/logo_icon.png?v=32b374c96050" width="72" height="72" alt="Hy-SimulMT Logo"><span data-i18n="headline">Listen. Translate.</span></h1>
+<p data-i18n="intro">Upload audio or start a live conversation, with optional spoken translation.</p></header>
+<aside id="mock" hidden data-i18n="demoNotice">Demo mode: text is simulated and audio is a test tone, not a real translation.</aside>
+<section class="controls">
+<label><span data-i18n="chunkMode">Chunking mode</span><select id="response-mode"><option value="standard" selected data-i18n="standardMode">Standard</option></select></label>
+<div class="direction-field">
+<span id="direction-label" data-i18n="translationDirection">Translation direction</span>
+<div class="direction-switch" role="group" aria-labelledby="direction-label">
+<span id="source-language" data-i18n="chinese">Chinese</span>
+<button id="direction-swap" type="button" aria-label="Switch to English → Chinese" title="Switch to English → Chinese" disabled>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<span id="target-language" data-i18n="english">English</span>
+<input type="hidden" id="direction" name="direction" value="zh-en">
+</div>
+</div>
+<label class="check"><input type="checkbox" id="tts"><span id="tts-label" data-i18n="readTranslation">Read translation aloud</span></label>
+<label id="voice-field"><span data-i18n="voice">Voice</span><input id="voice" placeholder="Use the default TTS voice" data-i18n-placeholder="defaultVoice"></label>
+</section>
+<p id="model-info" class="hint" data-i18n="loadingModel">Loading the deployed model…</p>
+<p id="cadence-help" class="hint" hidden></p>
+<section class="actions">
+<div class="action-group"><label class="file"><span data-i18n="chooseAudio">Choose audio</span><input type="file" id="file" accept="audio/*"></label>
+<button id="upload" disabled data-i18n="upload">Translate file</button></div><span class="divider" data-i18n="or">or</span>
+<div class="action-group"><button id="mic" class="primary" disabled data-i18n="startLive">Start live</button><button id="stop" disabled data-i18n="finish">Finish</button></div>
+</section>
+<p class="hint input-hint" data-i18n="inputHint">Mono and multichannel audio at common sample rates are converted automatically. Microphone access requires localhost or HTTPS.</p>
+<p id="capture-status" class="hint" hidden></p>
+<p id="input-audio" class="hint" hidden></p>
+<p id="tts-history" class="hint" hidden></p>
+<p id="tts-status" class="hint" aria-live="polite" hidden></p>
+<p id="tts-warning" class="hint" role="status" hidden></p>
+<div role="status" class="status"><span id="dot"></span><span id="status" data-i18n="connecting">Connecting to the service…</span><span id="progress"></span></div>
+<p id="error" role="alert" hidden></p>
+<section class="panels"><article id="source-panel" hidden><h2 data-i18n="sourceText">Source</h2><div id="source" class="text" data-empty-label="Waiting for speech…" data-i18n-empty="waitingSpeech"></div></article>
+<article><h2 data-i18n="translation">Translation</h2><div id="translation" class="text" aria-live="polite" data-empty-label="Waiting for speech…" data-i18n-empty="waitingSpeech"></div></article></section>
+</main><script type="module" src="./static/app.js?v=0.5.14"></script></body></html>

@@ -1,0 +1,69 @@
+# 原生 vLLM：安装 simulst 后使用 vllm serve，再启动 SimulInfer。
+# 默认启用静音检测；音频处理和解码过滤按需配置。
+[server]
+host = "127.0.0.1"
+port = 8080
+max_sessions = 4
+timeout_seconds = 900
+
+[models.target_only]
+backend = "vllm"
+base_url = "http://127.0.0.1:8800/v1"
+model = "simulst"
+chat_protocol = "standard"
+api_key_env = "VLLM_API_KEY"
+
+[inference]
+# 普通同传保留原音频；抗噪默认只裁剪ST，同传裁剪可显式开启。
+audio_mode = "standard"
+first_chunk_ms = 1600
+chunk_ms = 1600
+model_audio_format = "pcm16"
+# 定时切窗，0关闭。
+window_seconds = 0
+token_budget_enabled = false
+max_model_len = 8192
+context_reserve_tokens = 256
+# 单次生成上限。
+max_tokens = 64
+st_max_tokens = 256
+reset_on_max_tokens = false
+st_wait_chunks = 4
+st_context = false
+reset_after_audible_st = false
+reset_after_silence_st = false
+reset_after_empty_st = false
+# 不按时长丢弃ST开头，不预先移除尾部静音块；人声裁剪由st_crop_speech控制。
+st_fallback_max_seconds = 0
+st_trim_trailing_silence = false
+# 此替代配置不启用FireRed ST检测；按Silero人声段前后240ms裁剪ST。
+st_crop_speech = true
+simulst_crop_speech = false
+st_segment_pad_ms = 240
+repetition_penalty = 1.0
+st_repetition_penalty = 1.05
+# Silero静音检测；是否裁剪同传由audio_mode决定。
+vad_mode = "silero"
+vad_model_path = ""
+vad_threshold = 0.5
+vad_release_threshold = 0.35
+vad_pad_ms = 160
+vad_cpu_threads = 1
+silence_rms = 0.003
+skip_initial_silence = true
+trailing_silence_seconds = 2.4
+post_speech_silence_mode = "passthrough"
+vad_preroll_enabled = false
+# ST二次人声检测和短语音输出过滤：按需打开。
+st_vad_mode = "off"
+st_vad_threshold = 0.4
+# ST短语音输出限制：省略时普通模式关闭、抗噪模式开启；false可强制关闭。
+# st_short_speech_guard = false
+# 在模型环境安装 SimulInfer 后，vLLM 自动加载同传与 ST 重复限制。
+model_logits_processors = true
+no_repeat_ngram_size = 3
+st_no_repeat_ngram_size = 3
+no_chinese_target = false
+
+[tts]
+tts_backend = "none"

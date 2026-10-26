@@ -1,0 +1,15 @@
+SimulInfer
+
+This repository provides a speech translation request/session layer and web UI.
+Model checkpoints and dependencies are governed by their respective licenses.
+
+Silero VAD 6.2.3 is distributed under the MIT license. The bundled model's
+license, source and integrity information are in
+simulinfer/models/silero_vad_6.2.3/.
+
+FireRedVAD resources and dependency information are documented in
+simulinfer/models/firered_vad/.
+
+FireRedVAD and FireRedStreamVAD are distributed under Apache-2.0. Their upstream
+licenses, model revision and file checksums are included in the respective
+models/firered_vad and models/firered_stream_vad directories.

@@ -1,0 +1,30 @@
+{#- simulst-mm openai chat branch v1 #}
+{%- set src = '<｜hy_place▁holder▁no▁790｜>' -%}
+{%- set mode = output_mode|default('target_only') -%}
+{{- '<｜hy_begin▁of▁sentence｜><｜reasoning_mode｜>reasoning_effort:no_think' -}}
+{%- for message in messages -%}
+{%- if message['role'] == 'user' -%}
+{{- '<｜hy_User｜>' -}}
+{%- for part in message['content'] -%}
+{%- if part['type'] == 'text' -%}{{- part['text'] -}}
+{%- elif part['type'] in ['audio', 'input_audio'] -%}
+{{- '<｜hy_place▁holder▁no▁6｜><｜hy_place▁holder▁no▁5｜><｜hy_place▁holder▁no▁8｜>' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- elif message['role'] == 'assistant' -%}
+{{- '<｜hy_Assistant｜><think></think>' -}}
+{%- if message['content'] is string -%}{{- message['content'] -}}
+{%- else -%}
+{%- for part in message['content'] -%}
+{%- if part['type'] == 'text' -%}{{- part['text'] -}}{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{{- '<｜hy_EOT｜>' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}
+{{- '<｜hy_Assistant｜><think></think>' -}}
+{%- if harness_prefix is defined -%}{{- harness_prefix -}}
+{%- elif mode == 'source_target' -%}{{- src -}}
+{%- endif -%}
+{%- endif -%}

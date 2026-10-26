@@ -1,0 +1,40 @@
+{
+  "name": "Silero VAD",
+  "version": "6.2.3",
+  "license": "MIT",
+  "upstream_repository": "https://github.com/snakers4/silero-vad",
+  "source_distribution": "silero_vad-6.2.3-py3-none-any.whl",
+  "source_distribution_sha256": "7b7f5436cfcb02fae583a05b512ea96467fd449fe54cb49a5e4f06c51a1e43b8",
+  "source_member": "silero_vad/data/silero_vad.jit",
+  "format": "TorchScript JIT",
+  "runtime_device": "cpu",
+  "harness_sample_rate": 16000,
+  "harness_frame_samples": 512,
+  "harness_frame_ms": 32,
+  "files": {
+    "silero_vad_6.2.3.jit": {
+      "sha256": "e1122837f4154c511485fe0b9c64455f7b929c96fbb8d79fbdb336383ebd3720",
+      "bytes": 2272526
+    },
+    "LICENSE": {
+      "sha256": "2e63e9a38b6e8fc0c7bc37ce174caca1862870856c6daf5697cfb785e925520b",
+      "bytes": 1075
+    }
+  },
+  "harness_defaults": {
+    "vad_mode": "silero",
+    "vad_model_path": "",
+    "vad_threshold": 0.5,
+    "vad_release_threshold": 0.35,
+    "vad_pad_ms": 160,
+    "vad_leading_pad_ms": 160,
+    "vad_full_chunk_speech_ms": 1000,
+    "vad_cpu_threads": 1,
+    "silence_rms": 0.003,
+    "trailing_silence_seconds": 2.4,
+    "skip_initial_silence": true,
+    "st_trim_trailing_silence": false,
+    "post_speech_silence_mode": "passthrough"
+  },
+  "note": "Detection thresholds and silence policy are SimulInfer runtime settings, not learned model weights. vad_model_path empty selects the bundled model."
+}

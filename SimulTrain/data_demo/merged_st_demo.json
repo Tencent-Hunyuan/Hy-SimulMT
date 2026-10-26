@@ -1,0 +1,17 @@
+[
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": "把这段语音翻译成中文，要全部输出，不要分块。<｜hy_place▁holder▁no▁6｜><audio><｜hy_place▁holder▁no▁8｜>"
+      },
+      {
+        "role": "assistant",
+        "content": "<｜hy_place▁holder▁no▁790｜>This is the source transcript.<｜hy_place▁holder▁no▁791｜>这是目标译文。"
+      }
+    ],
+    "audios": [
+      "replace-with-your-audio.wav"
+    ]
+  }
+]

@@ -1,0 +1,72 @@
+# 扩展策略：模型服务需使用simulinfer-vllm加载本包解码处理器。
+[server]
+host = "127.0.0.1"
+port = 8080
+max_sessions = 4
+timeout_seconds = 900
+
+[models.target_only]
+backend = "vllm"
+base_url = "http://127.0.0.1:8800/v1"
+model = "simulst"
+api_key_env = "VLLM_API_KEY"
+
+# 单独的源文+译文模型使用另一模型API；只配置你实际部署的模式。
+# [models.source_target]
+# backend = "vllm"
+# base_url = "http://127.0.0.1:8801/v1"
+# model = "simulst-source-target"
+
+[inference]
+# 普通同传保留原音频；抗噪默认只裁剪ST，同传裁剪可显式开启。
+audio_mode = "standard"
+token_budget_enabled = true
+reset_on_max_tokens = true
+vad_preroll_enabled = true
+st_vad_mode = "firered_nonstream"
+st_vad_threshold = 0.4
+st_short_speech_guard = true
+model_logits_processors = true
+first_chunk_ms = 1600
+chunk_ms = 1600
+# SimulInfer→vLLM的WAV位深；可选择float32。
+model_audio_format = "pcm16"
+window_seconds = 0
+max_model_len = 8192
+context_reserve_tokens = 256
+max_tokens = 64
+st_max_tokens = 256
+st_wait_chunks = 4
+st_context = false
+reset_after_audible_st = true
+reset_after_silence_st = true
+reset_after_empty_st = true
+st_fallback_max_seconds = 30
+st_trim_trailing_silence = false
+# ST检测原始待译音频后裁剪：普通模式前后240ms，抗噪模式前160ms/后240ms。
+st_crop_speech = true
+simulst_crop_speech = false
+st_segment_pad_ms = 240
+repetition_penalty = 1.05
+no_repeat_ngram_size = 3
+st_no_repeat_ngram_size = 3
+st_repetition_penalty = 1.05
+# firered=FireRedStreamVAD；silero=可选Silero；energy=RMS；off=关闭。
+vad_mode = "firered"
+vad_model_path = ""
+vad_threshold = 0.4
+vad_release_threshold = 0.35
+vad_pad_ms = 240
+vad_leading_pad_ms = 160
+vad_cpu_threads = 1
+silence_rms = 0.003
+trailing_silence_seconds = 2.4
+skip_initial_silence = true
+post_speech_silence_mode = "zero_fill"
+no_chinese_target = true
+
+[tts]
+tts_backend = "none"
+tts_url = "http://127.0.0.1:8003"
+tts_sample_rate = 24000
+tts_min_chars = 40

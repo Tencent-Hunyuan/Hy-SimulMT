@@ -1,0 +1,17 @@
+.git
+.venv
+**/__pycache__
+*.egg-info
+.pytest_cache
+.env
+config.local.toml
+outputs
+logs
+dist
+build
+*.wav
+*.pcm
+*.mp3
+*.safetensors
+
+releases/

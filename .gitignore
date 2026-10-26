@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.env
+.env.local
+.env.*.local
+.DS_Store
+.simulinfer/
+deploy.toml

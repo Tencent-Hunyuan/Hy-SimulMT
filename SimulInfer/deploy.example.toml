@@ -1,0 +1,43 @@
+[deployment]
+model = "tencent/Hy-SimulMT-30B-A3B-Interleave"
+runtime_dir = ".simulinfer"
+host = "0.0.0.0"
+port = 8080
+model_port = 8800
+max_sessions = 4
+max_num_seqs = 4
+tensor_parallel_size = 1
+gpu_memory_utilization = 0.9
+startup_timeout = 900
+# false: use an existing compatible model environment.
+# true: install simulst + vLLM into a separate model environment.
+install_server = false
+# server_python = "/path/to/model-env/bin/python"
+# gpus = "0"
+# Connect an existing model API instead of starting a model:
+# backend_url = "http://model-host:8800/v1"
+
+# Optional inference settings. Change chunk_ms to 800 for a 1600ms first chunk
+# followed by 800ms chunks; the web page follows this configuration.
+[inference]
+first_chunk_ms = 1600
+chunk_ms = 1600
+no_repeat_ngram_size = 3
+st_no_repeat_ngram_size = 3
+model_logits_processors = true
+no_chinese_target = true
+simulst_crop_speech = false
+st_crop_speech = true
+
+# Optional: connect an already deployed Qwen TTS clone service.
+# [tts]
+# tts_backend = "vllm_omni"
+# tts_url = "http://tts-host:8091/v1"
+# tts_model = "Qwen/Qwen3-TTS-12Hz-0.6B-Base"
+# tts_task_type = "Base"
+# tts_clone_source = true
+# tts_history_mode = "paired"
+# tts_history_window_s = 10
+# tts_speed = 1.1
+# tts_speed_zh_en = 1.2
+# tts_tail_filter = true

@@ -1,0 +1,58 @@
+### Continue training an exported HYV3SpeechForCausalLM checkpoint.
+### The source model directory is read-only.  All generated files are placed
+### below output_dir.
+
+variant: hy_v3_speech_merged
+merged_model_path: PLEASE_OVERRIDE
+
+encoder_type: qwen3_asr
+adapter_type: fsk
+fsk_size: 2
+train_encoder: false
+save_frozen_llm: true
+
+trust_remote_code: true
+flash_attn: fa2
+
+stage: sft
+do_train: true
+finetuning_type: full
+freeze_language_model: false
+freeze_vision_tower: true
+freeze_multi_modal_projector: false
+
+dataset: PLEASE_OVERRIDE
+dataset_dir: PLEASE_OVERRIDE
+media_dir: PLEASE_OVERRIDE
+cutoff_len: 2048
+packing: false
+preprocessing_num_workers: 8
+dataloader_num_workers: 4
+
+output_dir: PLEASE_OVERRIDE
+overwrite_output_dir: true
+logging_steps: 10
+save_strategy: steps
+save_steps: 500
+save_total_limit: 2
+plot_loss: true
+report_to: none
+
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 2
+num_train_epochs: 1.0
+learning_rate: 1.0e-5
+lr_scheduler_type: cosine
+warmup_steps: 1000
+weight_decay: 0.0
+optim: adamw_torch
+bf16: true
+fp16: false
+seed: 42
+
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: true
+ddp_timeout: 180000000
+
+deepspeed: vendor/LlamaFactory/examples/deepspeed/ds_z3_config.json

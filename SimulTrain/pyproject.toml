@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simultrain"
+version = "0.2.0"
+description = "Read-only continuation training for merged HYV3 speech checkpoints with vendored LlamaFactory"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+
+# The fully pinned training environment is in requirements.txt.  Keep the
+# package metadata minimal so editable installation never tries to replace a
+# site-specific torch/flash-attn build.
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# 多机/大模型场景的 ZeRO-3
+deepspeed = ["deepspeed>=0.16,<0.20"]
+# 从 ModelScope 拉权重
+modelscope = ["modelscope>=1.20"]
+
+[project.scripts]
+simultrain = "s2s_train.launcher:main"
+s2s-train = "s2s_train.launcher:main"
+simultrain-infer = "s2s_train.infer:main"
+s2s-infer = "s2s_train.infer:main"
+
+[tool.setuptools.packages.find]
+include = ["s2s_train*"]
+
+[tool.setuptools.package-data]
+s2s_train = ["py.typed"]

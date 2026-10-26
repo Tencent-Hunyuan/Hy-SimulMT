@@ -1,0 +1,19 @@
+# 已有的同传部署：会话策略、模型块长、VAD、ST由上游拥有。
+[server]
+host = "127.0.0.1"
+port = 8080
+max_sessions = 16
+
+[models.target_only]
+backend = "service"
+base_url = "http://127.0.0.1:8500"
+
+[models.source_target]
+backend = "service"
+base_url = "http://127.0.0.1:8520"
+
+[tts]
+tts_backend = "session"
+tts_url = "http://127.0.0.1:8003"
+tts_sample_rate = 24000
+tts_min_chars = 40

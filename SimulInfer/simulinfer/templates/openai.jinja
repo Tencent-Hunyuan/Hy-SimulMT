@@ -1,0 +1,39 @@
+{#- simulst-mm openai chat branch v2 #}
+{%- if messages and messages[0]['content'] is not string -%}
+{{- '<｜hy_begin▁of▁sentence｜><｜reasoning_mode｜>reasoning_effort:no_think' -}}
+{%- for message in messages -%}
+{%- if message['role'] == 'user' -%}
+{{- '<｜hy_User｜>' -}}
+{%- for part in message['content'] -%}
+{%- if part['type'] == 'text' -%}{{- part['text'] -}}
+{%- elif part['type'] in ['audio', 'input_audio'] -%}{{- '<｜hy_place▁holder▁no▁6｜><｜hy_place▁holder▁no▁5｜><｜hy_place▁holder▁no▁8｜>' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- elif message['role'] == 'assistant' -%}
+{{- '<｜hy_Assistant｜><think></think>' -}}
+{%- if message['content'] is string -%}
+{{- message['content'] -}}
+{%- else -%}
+{%- for part in message['content'] -%}
+{%- if part['type'] == 'text' -%}{{- part['text'] -}}{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{{- '<｜hy_EOT｜>' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}{{- '<｜hy_Assistant｜><think></think>' -}}
+{%- if simulst_output_mode|default('translation') == 'bilingual' -%}
+{{- '<｜hy_place▁holder▁no▁790｜>' -}}
+{%- endif -%}{%- endif -%}
+{%- else -%}
+{{- '<｜hy_begin▁of▁sentence｜><｜reasoning_mode｜>reasoning_effort:no_think' -}}
+{%- for message in messages -%}
+{%- if message['role'] == 'user' -%}{{- '<｜hy_User｜>' -}}
+{%- elif message['role'] == 'assistant' -%}{{- '<｜hy_Assistant｜><think></think>' -}}
+{%- endif -%}
+{{- message['content'] -}}
+{%- if message['role'] == 'assistant' -%}{{- '<｜hy_EOT｜>' -}}{%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}{{- '<｜hy_Assistant｜><think></think>' -}}{%- endif -%}
+
+{%- endif -%}

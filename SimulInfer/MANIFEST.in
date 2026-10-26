@@ -1,0 +1,10 @@
+include deploy.sh deploy.example.toml serve_llamacpp.py
+include README.md README.zh-CN.md LICENSE NOTICE config.example.toml Dockerfile start.sh .dockerignore
+recursive-include docs *.md
+recursive-include configs *.toml *.yaml
+recursive-include scripts *.sh
+recursive-include tests *.py
+recursive-exclude * __pycache__ *.py[cod]
+prune outputs
+prune logs
+prune releases

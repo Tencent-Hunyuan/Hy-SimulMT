@@ -1,0 +1,3 @@
+# Preserve upstream Markdown hard line breaks in vendored documentation.
+SimulTrain/vendor/LlamaFactory/**/*.md whitespace=-blank-at-eol
+SimulTrain/vendor/LlamaFactory/*.md whitespace=-blank-at-eol
