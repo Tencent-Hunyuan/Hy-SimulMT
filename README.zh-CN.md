@@ -328,16 +328,21 @@ cd SimulTrain
 环境准备、数据格式与训练命令见[训练指南](SimulTrain/README.zh-CN.md)或[English](SimulTrain/README.md)。
 训练请使用独立 Python 环境。
 
+## 贡献者
+
+Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Guanghua Yu, Decheng Wu, Hongyu Li
+
 ## Citing Hy-SimulMT
 
-正式引用信息将在技术报告发布后补充。以下仅为 BibTeX 占位模板，尚不是正式论文引用。
+如果 Hy-SimulMT 对你有所帮助，欢迎引用：
 
 ```bibtex
 @misc{hy_simulmt,
-  title  = {TODO: 正式论文题名},
-  author = {TODO: 作者列表},
-  year   = {TODO: 发布年份},
-  url    = {TODO: 技术报告链接}
+  title  = {Hy-SimulMT：A Low-Latency, High-Quality Model for Real-Time Simultaneous Translation},
+  author = {Mao Zheng and Bo Lv and Mingrui Sun and Zheng Li and Fangxu Liu and Tao Chen and Bingxin Qu},
+  year   = {2026},
+  month  = oct,
+  url    = {https://hy.tencent.com/model/open-source-model/detail?id=hy-simulmt}
 }
 ```
 
