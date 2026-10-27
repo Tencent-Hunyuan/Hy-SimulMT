@@ -308,6 +308,36 @@ The detailed guide covers [installation and deployment options](SimulInfer/READM
 and [TTS setup](SimulInfer/docs/TTS.en.md).
 
 
+### llama.cpp
+
+We added architecture-specific support for Hy-SimulMT to llama.cpp to enable inference with GGUF models. We have submitted [PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198) to the llama.cpp repository.
+
+> This support has not yet been merged into the official llama.cpp repository. The PR currently supports inference through `llama-mtmd-cli`; `llama-server` support is planned as a follow-up. Before using the server deployment steps below, ensure that your llama.cpp version includes the required Hy-SimulMT server support.
+
+Use this option when an audio-capable llama.cpp server has already loaded your
+Hy-SimulMT GGUF model on port **8080**. In a Python 3.11+ environment, run the
+following from the repository root:
+
+```bash
+cd SimulInfer
+python -m pip install .
+export MODEL=/path/to/hymt-A3b-tgt_only-1019-Q8_0.gguf
+MODEL_TYPE=target_only python serve_llamacpp.py
+```
+
+Replace `MODEL` with your own GGUF path, exactly as loaded by the llama.cpp server.
+Use `MODEL_TYPE=target_only` for a translation-only model, or `source_target` for
+a model that outputs both source text and translation.
+
+For `serve_llamacpp.py`, open **http://127.0.0.1:8094/** for the web page.
+This is the bridge web/API port; **8080** is the default llama.cpp model port.
+The separate `deploy.sh` / `simulinfer` launch path defaults to web/API port **8080**.
+For the llama.cpp bridge, file uploads and WebSocket use
+`/translate/stream` and `/translate/ws` on port **8094**. The script connects to
+`http://127.0.0.1:8080` by default; set `LLAMA_URL` for a different model server
+and `PORT` for a different web/API port. For remote microphone access, use an
+HTTPS port-forwarding address.
+
 ### SGLang-Omni
 
 [X-post](https://x.com/sgl_project/status/2114995700010516510?s=20)
@@ -404,35 +434,7 @@ for request parameters, streaming behavior, reference validation against Transfo
 measured latency (up to 6.5x faster than Transformers on H200 at batch size one).
 
 
-### llama.cpp
 
-We added architecture-specific support for Hy-SimulMT to llama.cpp to enable inference with GGUF models. We have submitted [PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198) to the llama.cpp repository.
-
-> This support has not yet been merged into the official llama.cpp repository. The PR currently supports inference through `llama-mtmd-cli`; `llama-server` support is planned as a follow-up. Before using the server deployment steps below, ensure that your llama.cpp version includes the required Hy-SimulMT server support.
-
-Use this option when an audio-capable llama.cpp server has already loaded your
-Hy-SimulMT GGUF model on port **8080**. In a Python 3.11+ environment, run the
-following from the repository root:
-
-```bash
-cd SimulInfer
-python -m pip install .
-export MODEL=/path/to/hymt-A3b-tgt_only-1019-Q8_0.gguf
-MODEL_TYPE=target_only python serve_llamacpp.py
-```
-
-Replace `MODEL` with your own GGUF path, exactly as loaded by the llama.cpp server.
-Use `MODEL_TYPE=target_only` for a translation-only model, or `source_target` for
-a model that outputs both source text and translation.
-
-For `serve_llamacpp.py`, open **http://127.0.0.1:8094/** for the web page.
-This is the bridge web/API port; **8080** is the default llama.cpp model port.
-The separate `deploy.sh` / `simulinfer` launch path defaults to web/API port **8080**.
-For the llama.cpp bridge, file uploads and WebSocket use
-`/translate/stream` and `/translate/ws` on port **8094**. The script connects to
-`http://127.0.0.1:8080` by default; set `LLAMA_URL` for a different model server
-and `PORT` for a different web/API port. For remote microphone access, use an
-HTTPS port-forwarding address.
 
 ## Train — SimulTrain
 
