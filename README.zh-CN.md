@@ -197,6 +197,94 @@ https://github.com/user-attachments/assets/466a64c2-787b-4ade-8f22-576a2d31edac
 **SimulInfer** 支持网页、音频文件上传、实时 WebSocket，以及可选的 TTS 输入音色克隆。
 页面根据部署的模型自动显示源文或仅显示译文，无需再选择输出模式。
 
+### SGLang-Omni
+
+[SGLang-Omni](https://github.com/sgl-project/sglang-omni) 是多阶段推理服务运行时，通过
+OpenAI 兼容的 HTTP 接口和实时 WebSocket 提供 Hy-SimulMT 服务。当前支持本 checkpoint
+（`Hy-SimulMT-30B-A3B`，BF16，仅输出译文）。该集成只返回译文文本：语音输出与声音克隆需要
+另行接入 TTS 服务；FP8、GGUF 与 Interleave 版本不在本集成支持范围内。
+
+环境要求：Linux、NVIDIA GPU 与 CUDA 驱动。BF16 权重约占用 57 GiB（不含 KV cache 与运行时
+开销），单张 H200 即可部署。推荐使用 Docker，镜像内已预置 UCX、flash-attn、SGLang 与 CUDA：
+
+```bash
+docker run -it \
+    --shm-size 32g \
+    --gpus all \
+    --ipc host \
+    --network host \
+    --privileged \
+    hongccc/sglang-omni:dev \
+    /bin/zsh
+```
+
+在容器内安装 `sglang-omni`：
+
+```bash
+git clone https://github.com/sgl-project/sglang-omni.git
+cd sglang-omni
+
+pip install --upgrade pip
+pip install uv
+
+uv venv .venv -p 3.12
+source .venv/bin/activate
+
+uv pip install --prerelease=allow -v -e .
+```
+
+启动服务：
+
+```bash
+sgl-omni serve \
+  --model-path tencent/Hy-SimulMT-30B-A3B \
+  --mem-fraction-static 0.75 \
+  --enable-realtime \
+  --port 8000
+```
+
+默认启用 decode CUDA graph、关闭 Torch 编译。只有在下面使用实时 WebSocket 时才需要
+`--enable-realtime`。这里的 Web/API 端口是 **8000**，与 SimulInfer 的 8080 不同。
+
+中文语音 → 英文文本：
+
+```bash
+curl http://localhost:8000/v1/audio/translations \
+  -F file=@chinese.wav \
+  -F language=zh \
+  -F response_format=json
+```
+
+英文语音 → 中文文本：
+
+```bash
+curl http://localhost:8000/v1/audio/transcriptions \
+  -F file=@english.wav \
+  -F language=en \
+  -F response_format=json
+```
+
+`language` 是源语言（`zh` 或 `en`）；由于该 checkpoint 没有语种识别 token，请显式指定。
+省略时默认中译英。单次请求只接受一个音频文件，时长上限 30 秒，超长音频会被拒绝而不是截断。
+任一接口加上 `-F stream=true`，即可收到 `transcript.text.delta` SSE 事件，以及作为最终结果
+的 `transcript.text.done`。
+
+实时音频使用 `/v1/realtime?intent=transcription`（需要 `--enable-realtime`），接受 16 kHz
+单声道 PCM16：
+
+1. 发送 `session.update`，将 `session.language` 设为源语言（`zh` 或 `en`）。
+2. 通过 `input_audio_buffer.append` 发送 base64 编码的 PCM 分片。
+3. 接收 `transcription.segment` 译文假设，默认每 1.6 秒刷新一次。
+4. 发送 `input_audio_buffer.commit` 结束当前分段，或发送 `transcription.done` 结束输入。
+
+每个 partial 请求都会保留此前的音频轮次及其译文作为上下文；最终假设会对整段重新翻译，可能
+修订此前的部分译文。运行时在 30 秒处切分分段，之后翻译上下文重新开始。该路径未复现
+SimulInfer 的 VAD 与恢复策略。
+
+更多请求参数、流式行为、与 Transformers 的一致性校验以及实测延迟（H200、batch size 1 下
+相比 Transformers 最高 6.5 倍加速），参见
+[Hy-SimulMT cookbook](https://sgl-project.github.io/sglang-omni/cookbook/hy_simulmt.html)。
+
 ### vLLM
 
 准备 Linux、Python 3.12 及以上、Git、能够容纳所选模型的 NVIDIA GPU 和兼容的驱动。
