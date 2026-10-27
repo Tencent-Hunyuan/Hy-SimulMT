@@ -203,6 +203,102 @@ From understanding the message to keeping pace with the speaker and delivering m
 optional TTS with input voice cloning. The deployed model determines whether
 source text is displayed; no output-mode selection is needed.
 
+### SGLang-Omni
+
+[X-post](https://x.com/sgl_project/status/2114995700010516510?s=20)
+
+[SGLang-Omni](https://github.com/sgl-project/sglang-omni) is a multi-stage serving runtime that
+serves Hy-SimulMT through OpenAI-compatible HTTP endpoints and a realtime WebSocket. It covers
+this checkpoint (`Hy-SimulMT-30B-A3B`, BF16, translation-only output). It returns translated
+text only: speech output and voice cloning require a separate TTS service, and the FP8, GGUF and
+Interleave checkpoints are not covered by this integration.
+
+Requirements: Linux with an NVIDIA GPU and a CUDA driver. The BF16 weights occupy about 57 GiB
+before KV cache and runtime allocations, so a single H200 is sufficient. Docker is recommended,
+because UCX, flash-attn, SGLang and CUDA are prebuilt:
+
+```bash
+docker run -it \
+    --shm-size 32g \
+    --gpus all \
+    --ipc host \
+    --network host \
+    --privileged \
+    hongccc/sglang-omni:dev \
+    /bin/zsh
+```
+
+Inside the container, install `sglang-omni`:
+
+```bash
+git clone https://github.com/sgl-project/sglang-omni.git
+cd sglang-omni
+
+pip install --upgrade pip
+pip install uv
+
+uv venv .venv -p 3.12
+source .venv/bin/activate
+
+uv pip install --prerelease=allow -v -e .
+```
+
+Start the server:
+
+```bash
+sgl-omni serve \
+  --model-path tencent/Hy-SimulMT-30B-A3B \
+  --mem-fraction-static 0.75 \
+  --enable-realtime \
+  --port 8000
+```
+
+Decode CUDA graphs are enabled and Torch compilation is disabled by default. `--enable-realtime`
+is only required for the streaming WebSocket below. The web/API port here is **8000**, not the
+8080 used by SimulInfer.
+
+For Chinese speech to English text:
+
+```bash
+curl http://localhost:8000/v1/audio/translations \
+  -F file=@chinese.wav \
+  -F language=zh \
+  -F response_format=json
+```
+
+For English speech to Chinese text:
+
+```bash
+curl http://localhost:8000/v1/audio/transcriptions \
+  -F file=@english.wav \
+  -F language=en \
+  -F response_format=json
+```
+
+`language` is the source language (`zh` or `en`); pass it explicitly, because this checkpoint
+provides no language-detection tokens. Omitting it defaults to Chinese-to-English. Each request
+accepts one file of at most 30 seconds; longer audio is rejected rather than truncated. Add
+`-F stream=true` to either endpoint to receive `transcript.text.delta` SSE events followed by the
+authoritative `transcript.text.done`.
+
+Live audio uses `/v1/realtime?intent=transcription` (requires `--enable-realtime`) with mono
+PCM16 at 16 kHz:
+
+1. Send `session.update` with `session.language` set to the source language (`zh` or `en`).
+2. Send base64 PCM chunks with `input_audio_buffer.append`.
+3. Receive `transcription.segment` translation hypotheses, refreshed every 1.6 seconds.
+4. Send `input_audio_buffer.commit` to finish a segment, or `transcription.done` to finish input.
+
+Each partial request keeps earlier audio turns and their translations as context; the final
+hypothesis re-translates the complete segment and can revise earlier partial translations. The
+runtime starts a fresh translation context after 30 seconds. This path does not reproduce
+SimulInfer's VAD and recovery heuristics.
+
+See the [Hy-SimulMT cookbook](https://sgl-project.github.io/sglang-omni/cookbook/hy_simulmt.html)
+for request parameters, streaming behavior, reference validation against Transformers, and
+measured latency (up to 6.5x faster than Transformers on H200 at batch size one).
+
+
 ### vLLM
 
 Prepare a Linux machine with Python 3.12+, Git, an NVIDIA GPU with enough memory
