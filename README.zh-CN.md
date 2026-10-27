@@ -428,7 +428,7 @@ cd SimulTrain
 
 ## 贡献者
 
-Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Steve Yves, Rilin Chen, Longsha Zhou, Shan Yang, Guanghua Yu, Decheng Wu, Hongyu Li
+Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Steve Yves, Rilin Chen, Longsha Zhou, Guanghua Yu, Decheng Wu, Hongyu Li
 
 ## Citing Hy-SimulMT
 
