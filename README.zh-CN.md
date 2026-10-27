@@ -293,6 +293,35 @@ bash deploy.sh --backend-url http://model-host:8800/v1 --port 8081 --runtime-dir
 更多内容见[详细推理指南](SimulInfer/README.zh-CN.md)、[配置说明](SimulInfer/docs/CONFIGURATION.md)、
 [音频客户端](SimulInfer/docs/AUDIO_INPUT.en.md)和[TTS 部署](SimulInfer/docs/TTS.zh-CN.md)。
 
+
+### llama.cpp
+
+我们已为 llama.cpp 添加 Hy-SimulMT 的专用架构支持，以实现 GGUF 模型推理，并向 llama.cpp 官方仓库提交了 [PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198)。
+
+> 相关支持尚未合并至 llama.cpp 官方仓库。该 PR 当前支持通过 `llama-mtmd-cli` 进行推理，`llama-server` 支持将在后续适配。使用下方服务部署步骤前，请确认所用 llama.cpp 版本已具备 Hy-SimulMT 所需的服务端支持。
+
+前提：支持音频输入的 llama.cpp 服务已在 **8080** 端口加载你的 Hy-SimulMT GGUF 模型。
+在 Python 3.11 及以上环境中，从仓库根目录执行：
+
+```bash
+cd SimulInfer
+python -m pip install .
+export MODEL=/path/to/hymt-A3b-tgt_only-1019-Q8_0.gguf
+MODEL_TYPE=target_only python serve_llamacpp.py
+```
+
+将 `MODEL` 替换为你自己的 GGUF 模型路径，必须与 llama.cpp 服务加载的路径一致。
+仅译文模型使用 `MODEL_TYPE=target_only`；源文和译文同出的模型使用 `source_target`。
+
+通过 `serve_llamacpp.py` 启动时，网页打开 **http://127.0.0.1:8094/**。
+**8094** 是桥接网页/API端口，**8080** 是其连接的 llama.cpp 模型端口。
+另一条 `deploy.sh` / `simulinfer` 启动路径默认使用 **8080** 作为网页/API端口。
+文件上传和 WebSocket 接口分别为网页端口下的
+`/translate/stream` 和 `/translate/ws`。脚本默认连接 `http://127.0.0.1:8080`；
+模型服务在其他地址时设置 `LLAMA_URL`，网页/API 需要其他端口时设置 `PORT`。
+远程使用麦克风时，通过 HTTPS 端口转发地址访问。
+
+
 ### SGLang-Omni
 
 [SGLang-Omni](https://github.com/sgl-project/sglang-omni) 是多阶段推理服务运行时，通过
@@ -381,32 +410,7 @@ SimulInfer 的 VAD 与恢复策略。
 相比 Transformers 最高 6.5 倍加速），参见
 [Hy-SimulMT cookbook](https://sgl-project.github.io/sglang-omni/cookbook/hy_simulmt.html)。
 
-### llama.cpp
 
-我们已为 llama.cpp 添加 Hy-SimulMT 的专用架构支持，以实现 GGUF 模型推理，并向 llama.cpp 官方仓库提交了 [PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198)。
-
-> 相关支持尚未合并至 llama.cpp 官方仓库。该 PR 当前支持通过 `llama-mtmd-cli` 进行推理，`llama-server` 支持将在后续适配。使用下方服务部署步骤前，请确认所用 llama.cpp 版本已具备 Hy-SimulMT 所需的服务端支持。
-
-前提：支持音频输入的 llama.cpp 服务已在 **8080** 端口加载你的 Hy-SimulMT GGUF 模型。
-在 Python 3.11 及以上环境中，从仓库根目录执行：
-
-```bash
-cd SimulInfer
-python -m pip install .
-export MODEL=/path/to/hymt-A3b-tgt_only-1019-Q8_0.gguf
-MODEL_TYPE=target_only python serve_llamacpp.py
-```
-
-将 `MODEL` 替换为你自己的 GGUF 模型路径，必须与 llama.cpp 服务加载的路径一致。
-仅译文模型使用 `MODEL_TYPE=target_only`；源文和译文同出的模型使用 `source_target`。
-
-通过 `serve_llamacpp.py` 启动时，网页打开 **http://127.0.0.1:8094/**。
-**8094** 是桥接网页/API端口，**8080** 是其连接的 llama.cpp 模型端口。
-另一条 `deploy.sh` / `simulinfer` 启动路径默认使用 **8080** 作为网页/API端口。
-文件上传和 WebSocket 接口分别为网页端口下的
-`/translate/stream` 和 `/translate/ws`。脚本默认连接 `http://127.0.0.1:8080`；
-模型服务在其他地址时设置 `LLAMA_URL`，网页/API 需要其他端口时设置 `PORT`。
-远程使用麦克风时，通过 HTTPS 端口转发地址访问。
 
 ## 训练 — SimulTrain
 
