@@ -295,7 +295,9 @@ bash deploy.sh --backend-url http://model-host:8800/v1 --port 8081 --runtime-dir
 
 ### llama.cpp
 
-> Hy-SimulMT 的 llama.cpp 适配尚未合并至官方仓库，相关支持预计很快推出，建议等待支持该模型的新版 llama.cpp 发布后再使用。
+我们已为 llama.cpp 添加 Hy-SimulMT 的专用架构支持，以实现 GGUF 模型推理，并向 llama.cpp 官方仓库提交了 [PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198)。
+
+> 相关支持尚未合并至 llama.cpp 官方仓库。该 PR 当前支持通过 `llama-mtmd-cli` 进行推理，`llama-server` 支持将在后续适配。使用下方服务部署步骤前，请确认所用 llama.cpp 版本已具备 Hy-SimulMT 所需的服务端支持。
 
 前提：支持音频输入的 llama.cpp 服务已在 **8080** 端口加载你的 Hy-SimulMT GGUF 模型。
 在 Python 3.11 及以上环境中，从仓库根目录执行：
@@ -334,7 +336,7 @@ cd SimulTrain
 
 ## 贡献者
 
-Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Guanghua Yu, Decheng Wu, Hongyu Li
+Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Guanghua Yu, Decheng Wu, Hongyu Li, Steve Yves
 
 ## Citing Hy-SimulMT
 

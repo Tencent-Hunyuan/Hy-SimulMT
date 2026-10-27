@@ -308,7 +308,9 @@ and [TTS setup](SimulInfer/docs/TTS.en.md).
 
 ### llama.cpp
 
-> Hy-SimulMT support has not yet been merged into the official llama.cpp repository. Support is expected soon; we recommend waiting for a new llama.cpp release that supports this model before using it.
+We added architecture-specific support for Hy-SimulMT to llama.cpp to enable inference with GGUF models. We have submitted [PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198) to the llama.cpp repository.
+
+> This support has not yet been merged into the official llama.cpp repository. The PR currently supports inference through `llama-mtmd-cli`; `llama-server` support is planned as a follow-up. Before using the server deployment steps below, ensure that your llama.cpp version includes the required Hy-SimulMT server support.
 
 Use this option when an audio-capable llama.cpp server has already loaded your
 Hy-SimulMT GGUF model on port **8080**. In a Python 3.11+ environment, run the
@@ -350,7 +352,7 @@ Use a separate Python environment for training.
 
 ## Contributors
 
-Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Guanghua Yu, Decheng Wu, Hongyu Li
+Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Guanghua Yu, Decheng Wu, Hongyu Li, Steve Yves
 
 ## Citing Hy-SimulMT
 
