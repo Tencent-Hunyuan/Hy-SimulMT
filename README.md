@@ -452,7 +452,7 @@ Use a separate Python environment for training.
 
 ## Contributors
 
-Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Steve Yves, Rilin Chen, Longsha Zhou, Shan Yang, Guanghua Yu, Decheng Wu, Hongyu Li
+Mao Zheng, Bo Lv, Mingrui Sun, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Shan Yang, rickkan, Steve Yves, Rilin Chen, Longsha Zhou, Guanghua Yu, Decheng Wu, Hongyu Li
 
 ## Citing Hy-SimulMT
 
